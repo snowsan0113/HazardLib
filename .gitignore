@@ -36,3 +36,8 @@ build/
 
 ### Mac OS ###
 .DS_Store
+/src/main/resources/AreaForecastLocalE_GIS/
+/src/main/resources/AreaForecastLocalEEW_GIS/
+/src/main/resources/AreaForecastLocalM_prefecture_GIS
+/src/main/resources/AreaInformationCity_quake_GIS
+/src/main/resources/AreaTsunami_GIS
