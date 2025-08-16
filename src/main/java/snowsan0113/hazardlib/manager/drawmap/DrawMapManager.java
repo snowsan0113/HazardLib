@@ -25,6 +25,36 @@ import java.util.Map;
 
 public class DrawMapManager {
 
+    public static BufferedImage getQuakeCityMap(List<Filter> draw_areaList, Map<Color, List<Filter>> draw_colormap) throws IOException {
+        //府県予報区
+        File eew = new File("G:\\開発\\snow\\HazardLib\\src\\main\\resources\\AreaForecastLocalM_prefecture_GIS\\府県予報区等.shp");
+        MapBuilder eew_map = new MapBuilder(eew, 1280, 1080)
+                .addStroke(Color.BLACK, 3f, null);
+        List<ReferencedEnvelope> envelope_list = new ArrayList<>();
+        for (Filter filter : draw_areaList) {
+            ReferencedEnvelope area = MapBuilder.getAreaEnvelope(eew_map.getMapFeatureSource(), filter); //都道府県ごとのReferencedEnvelopeを取得する
+            envelope_list.add(area); //都道府県ごとのReferencedEnvelopeを追加
+        }
+        eew_map.setDrawArea(envelope_list); //描画範囲を決定する
+        ImageIO.write(eew_map.build(), "png", new File("aaaa.png"));
+
+        //地震_細分
+        File file = new File("G:\\開発\\snow\\HazardLib\\src\\main\\resources\\AreaInformationCity_quake_GIS\\市町村等（地震津波関係）.shp");
+        MapBuilder builder = new MapBuilder(file, 1280, 1080)
+                .addFill(Color.LIGHT_GRAY, 1f, null);
+        builder.setDrawArea(envelope_list);
+        for (Map.Entry<Color, List<Filter>> entry : draw_colormap.entrySet()) {
+            Color color = entry.getKey();
+            for (Filter filter : entry.getValue()) {
+                builder.addFill(color, 1f, filter);
+            }
+        }
+
+        builder.getMap().addLayer(eew_map.getMap().layers().getFirst());
+
+        return builder.build();
+    }
+
     public static BufferedImage getQuakeLocalAreaMap(List<Filter> draw_areaList, Map<Color, List<Filter>> draw_colormap, Coordinate coordinate) throws IOException {
         //府県予報区
         File eew = new File("G:\\開発\\snow\\HazardLib\\src\\main\\resources\\AreaForecastLocalM_prefecture_GIS\\府県予報区等.shp");
